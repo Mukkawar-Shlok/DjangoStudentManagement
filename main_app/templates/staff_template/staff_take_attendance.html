@@ -53,8 +53,10 @@
                     <div class="card-footer">
                         <button type="button" id='fetch_student' class="btn btn-success btn-block">Fetch Students</button>
                         <div class="form-group" id="student_data">
-
+                            
                         </div>
+                        <button onclick="checkAll()">Mark all present.</button>
+                        <button onclick="uncheckAll()">Mark all absent.</button>
                     </div>
                 </div>
                 <!-- /.card -->
@@ -68,7 +70,21 @@
 
 {% block custom_js %}
 <script>
+    function checkAll() {
+  var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach(function(checkbox) {
+    checkbox.checked = true;
+  });
+}
+
+function uncheckAll() {
+  var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach(function(checkbox) {
+    checkbox.checked = false;
+  });
+}
     $(document).ready(function () {
+        
 
        
         $("#fetch_student").click(function () {

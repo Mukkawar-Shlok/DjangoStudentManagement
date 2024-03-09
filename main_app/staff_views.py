@@ -95,8 +95,9 @@ def save_attendance(request):
 
     return HttpResponse("OK")
 
-
+@csrf_exempt
 def staff_update_attendance(request):
+    print("in get staff")
     staff = get_object_or_404(Staff, admin=request.user)
     subjects = Subject.objects.filter(staff_id=staff)
     sessions = Session.objects.all()
@@ -128,6 +129,7 @@ def get_student_attendance(request):
 
 @csrf_exempt
 def update_attendance(request):
+    print("in update attendence")
     student_data = request.POST.get('student_ids')
     date = request.POST.get('date')
     students = json.loads(student_data)
@@ -141,6 +143,7 @@ def update_attendance(request):
             attendance_report.status = student_dict.get('status')
             attendance_report.save()
     except Exception as e:
+        print(e)
         return None
 
     return HttpResponse("OK")
