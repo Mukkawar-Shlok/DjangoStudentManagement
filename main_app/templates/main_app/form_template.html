@@ -3,14 +3,18 @@
     <div class="card-body">
 
 
-        {% for field in form  %}
+        {% for field in form %}
+    {% if field.name == 'profile_pic' %}
+        <input type="file" name="profile_pic" accept="image/*" class="form-control" style="display: none;">
+    {% else %}
         <div class="form-group">
-            {{field.errors}}
-            {{field.label_tag}}
-            {{field}}
-
+            {{ field.errors }}
+            {{ field.label_tag }}
+            {{ field }}
         </div>
-        {% endfor %}
+    {% endif %}
+{% endfor %}
+
 
 
 

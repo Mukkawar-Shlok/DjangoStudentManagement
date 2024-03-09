@@ -90,32 +90,31 @@ def add_staff(request):
     form = StaffForm(request.POST or None, request.FILES or None)
     context = {'form': form, 'page_title': 'Add Staff'}
     if request.method == 'POST':
-        if form.is_valid():
-            first_name = form.cleaned_data.get('first_name')
-            last_name = form.cleaned_data.get('last_name')
-            address = form.cleaned_data.get('address')
-            email = form.cleaned_data.get('email')
-            gender = form.cleaned_data.get('gender')
-            password = form.cleaned_data.get('password')
-            course = form.cleaned_data.get('course')
-            passport = request.FILES.get('profile_pic')
-            fs = FileSystemStorage()
-            filename = fs.save(passport.name, passport)
-            passport_url = fs.url(filename)
-            try:
-                user = CustomUser.objects.create_user(
-                    email=email, password=password, user_type=2, first_name=first_name, last_name=last_name, profile_pic=passport_url)
-                user.gender = gender
-                user.address = address
-                user.staff.course = course
-                user.save()
-                messages.success(request, "Successfully Added")
-                return redirect(reverse('add_staff'))
+        print(form)
+        first_name = form.cleaned_data.get('first_name')
+        last_name = form.cleaned_data.get('last_name')
+        address = form.cleaned_data.get('address')
+        email = form.cleaned_data.get('email')
+        gender = form.cleaned_data.get('gender')
+        password = form.cleaned_data.get('password')
+        course = form.cleaned_data.get('course')
+        # passport = request.FILES.get('profile_pic')
+        # fs = FileSystemStorage()
+        # filename = fs.save(passport.name, passport)
+        # passport_url = fs.url(filename)
+        try:
+            user = CustomUser.objects.create_user(
+                email=email, password=password, user_type=2, first_name=first_name, last_name=last_name, profile_pic="passport_url")
+            user.gender = gender
+            user.address = address
+            user.staff.course = course
+            user.save()
+            messages.success(request, "Successfully Added")
+            return redirect(reverse('add_staff'))
 
-            except Exception as e:
-                messages.error(request, "Could Not Add " + str(e))
-        else:
-            messages.error(request, "Please fulfil all requirements")
+        except Exception as e:
+            messages.error(request, "Could Not Add " + str(e))
+        
 
     return render(request, 'hod_template/add_staff_template.html', context)
 
@@ -124,33 +123,33 @@ def add_student(request):
     student_form = StudentForm(request.POST or None, request.FILES or None)
     context = {'form': student_form, 'page_title': 'Add Student'}
     if request.method == 'POST':
-        if student_form.is_valid():
-            first_name = student_form.cleaned_data.get('first_name')
-            last_name = student_form.cleaned_data.get('last_name')
-            address = student_form.cleaned_data.get('address')
-            email = student_form.cleaned_data.get('email')
-            gender = student_form.cleaned_data.get('gender')
-            password = student_form.cleaned_data.get('password')
-            course = student_form.cleaned_data.get('course')
-            session = student_form.cleaned_data.get('session')
-            passport = request.FILES['profile_pic']
-            fs = FileSystemStorage()
-            filename = fs.save(passport.name, passport)
-            passport_url = fs.url(filename)
-            try:
-                user = CustomUser.objects.create_user(
-                    email=email, password=password, user_type=3, first_name=first_name, last_name=last_name, profile_pic=passport_url)
-                user.gender = gender
-                user.address = address
-                user.student.session = session
-                user.student.course = course
-                user.save()
-                messages.success(request, "Successfully Added")
-                return redirect(reverse('add_student'))
-            except Exception as e:
-                messages.error(request, "Could Not Add: " + str(e))
-        else:
-            messages.error(request, "Could Not Add: ")
+        print(student_form)
+        
+        first_name = student_form.cleaned_data.get('first_name')
+        last_name = student_form.cleaned_data.get('last_name')
+        address = student_form.cleaned_data.get('address')
+        email = student_form.cleaned_data.get('email')
+        gender = student_form.cleaned_data.get('gender')
+        password = student_form.cleaned_data.get('password')
+        course = student_form.cleaned_data.get('course')
+        session = student_form.cleaned_data.get('session')
+        # passport = request.FILES['profile_pic']
+        # fs = FileSystemStorage()
+        # filename = fs.save(passport.name, passport)
+        # passport_url = fs.url(filename)
+        try:
+            user = CustomUser.objects.create_user(
+                email=email, password=password, user_type=3, first_name=first_name, last_name=last_name, profile_pic="passport_url")
+            user.gender = gender
+            user.address = address
+            user.student.session = session
+            user.student.course = course
+            user.save()
+            messages.success(request, "Successfully Added")
+            return redirect(reverse('add_student'))
+        except Exception as e:
+            messages.error(request, "Could Not Add: " + str(e))
+    
     return render(request, 'hod_template/add_student_template.html', context)
 
 
