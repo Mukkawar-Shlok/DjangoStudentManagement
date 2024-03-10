@@ -157,7 +157,7 @@ def add_course(request):
     form = CourseForm(request.POST or None)
     context = {
         'form': form,
-        'page_title': 'Add Course'
+        'page_title': 'Add Branch'
     }
     if request.method == 'POST':
         if form.is_valid():
@@ -179,7 +179,7 @@ def add_subject(request):
     form = SubjectForm(request.POST or None)
     context = {
         'form': form,
-        'page_title': 'Add Subject'
+        'page_title': 'Add Courses'
     }
     if request.method == 'POST':
         if form.is_valid():
@@ -225,7 +225,7 @@ def manage_course(request):
     courses = Course.objects.all()
     context = {
         'courses': courses,
-        'page_title': 'Manage Courses'
+        'page_title': 'Manage Branch'
     }
     return render(request, "hod_template/manage_course.html", context)
 
@@ -234,7 +234,7 @@ def manage_subject(request):
     subjects = Subject.objects.all()
     context = {
         'subjects': subjects,
-        'page_title': 'Manage Subjects'
+        'page_title': 'Manage Courses'
     }
     return render(request, "hod_template/manage_subject.html", context)
 
