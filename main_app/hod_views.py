@@ -106,7 +106,7 @@ def add_staff(request):
             user = CustomUser.objects.create_user(
                 email=email, password=password, user_type=2, first_name=first_name, last_name=last_name, profile_pic="passport_url")
             user.gender = gender
-            user.address = address
+            user.address = "address"
             user.staff.course = course
             user.save()
             messages.success(request, "Successfully Added")
@@ -141,7 +141,7 @@ def add_student(request):
             user = CustomUser.objects.create_user(
                 email=email, password=password, user_type=3, first_name=first_name, last_name=last_name, profile_pic="passport_url")
             user.gender = gender
-            user.address = address
+            user.address = "address"
             user.student.session = session
             user.student.course = course
             user.save()
