@@ -301,7 +301,9 @@ def fetch_student_result(request):
         result = StudentResult.objects.get(student=student, subject=subject)
         result_data = {
             'exam': result.exam,
-            'test': result.test
+            'test': result.test,
+            'sessionFirst': result.sessionFirst,  # Include sessionFirst in the response
+            'sessionSecond': result.sessionSecond  # Include sessionSecond in the response
         }
         return HttpResponse(json.dumps(result_data))
     except Exception as e:

@@ -171,6 +171,8 @@ class StudentResult(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     test = models.FloatField(default=0)
     exam = models.FloatField(default=0)
+    sessionFirst= models.FloatField(default=0)
+    sessionSecond= models.FloatField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

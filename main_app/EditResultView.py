@@ -17,7 +17,7 @@ class EditResultView(View):
         }
         return render(request, "staff_template/edit_student_result.html", context)
 
-    def post(self, request, *args, **kwargs):
+    # def post(self, request, *args, **kwargs):
         form = EditResultForm(request.POST)
         context = {'form': form, 'page_title': "Edit Student's Result"}
         if form.is_valid():
@@ -30,6 +30,31 @@ class EditResultView(View):
                 result = StudentResult.objects.get(student=student, subject=subject)
                 result.exam = exam
                 result.test = test
+                result.save()
+                messages.success(request, "Result Updated")
+                return redirect(reverse('edit_student_result'))
+            except Exception as e:
+                messages.warning(request, "Result Could Not Be Updated")
+        else:
+            messages.warning(request, "Result Could Not Be Updated")
+        return render(request, "staff_template/edit_student_result.html", context)
+    def post(self, request, *args, **kwargs):
+        form = EditResultForm(request.POST)
+        context = {'form': form, 'page_title': "Edit Student's Result"}
+        if form.is_valid():
+            try:
+                student = form.cleaned_data.get('student')
+                subject = form.cleaned_data.get('subject')
+                test = form.cleaned_data.get('test')
+                sessionFirst = form.cleaned_data.get('sessionFirst')
+                sessionSecond = form.cleaned_data.get('sessionSecond')
+                exam = form.cleaned_data.get('exam')
+                # Validating
+                result = StudentResult.objects.get(student=student, subject=subject)
+                result.exam = exam
+                result.test = test
+                result.sessionFirst = sessionFirst
+                result.sessionSecond = sessionSecond
                 result.save()
                 messages.success(request, "Result Updated")
                 return redirect(reverse('edit_student_result'))

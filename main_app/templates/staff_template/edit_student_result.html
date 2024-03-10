@@ -48,23 +48,31 @@
     $(document).ready(function () {
         $("#id_subject").change(function () {
             fetchStudents();
-            });
-            $("#id_session_year").change(function () {
-                fetchStudents();
-                });
-   $("#id_student").change(function () {
-    fetch_student_result();
-                });
-                $("#id_exam").hide()
-                $("#id_test").hide()
-                $("#update_result").hide()
-                $('label[for="id_test"]').hide();
-                $('label[for="id_exam"]').hide();
+        });
+        
+        $("#id_session_year").change(function () {
+            fetchStudents();
+        });
+
+        $("#id_student").change(function () {
+            fetch_student_result();
+        });
+
+        $("#id_exam").hide();
+        $("#id_sessionFirst").hide();
+        $("#id_sessionSecond").hide();
+        $("#id_test").hide();
+        $("#update_result").hide();
+        $('label[for="id_test"]').hide();
+        $('label[for="id_exam"]').hide();
+        $('label[for="id_sessionFirst"]').hide();
+        $('label[for="id_sessionSecond"]').hide();
+
         function fetchStudents(){
-            var subject = $("#id_subject").val()
-            var session = $("#id_session_year").val()
-            $("#id_student").html(null)
-            if (session.length  == 0 || subject.length == 0 || session < 1 || subject < 1){
+            var subject = $("#id_subject").val();
+            var session = $("#id_session_year").val();
+            $("#id_student").html(null);
+            if (session.length == 0 || subject.length == 0 || session < 1 || subject < 1) {
                 return false;
             }
             $.ajax({
@@ -72,66 +80,67 @@
                 type: 'POST',
                 data: {
                     subject: subject,
-                    session:session
+                    session: session
                 }
             }).done(function (response) {
-                var json_data = JSON.parse(response)
+                var json_data = JSON.parse(response);
                 if (json_data.length < 1) {
-                    alert("No data to display")
+                    alert("No data to display");
                 } else {
-                    var div_data = "<option>Select Student</option>"
-
+                    var div_data = "<option>Select Student</option>";
                     for (key in json_data) {
-                        div_data += "<option value='" + json_data[key]['id'] + "'>" + json_data[key]['name'] + " </option>"
+                        div_data += "<option value='" + json_data[key]['id'] + "'>" + json_data[key]['name'] + " </option>";
                     }
-             
-                    $("#id_student").html(div_data)
+                    $("#id_student").html(div_data);
                 }
             }).fail(function (response) {
-                alert("Error in fetching students")
-            })
-               }
+                alert("Error in fetching students");
+            });
+        }
 
-               function fetch_student_result(){
-                var student = $("#id_student").val()
-                var subject = $("#id_subject").val()
-                $("#id_test").val(null)
-                $("#id_exam").val(null)
-                $("#id_exam").hide()
-                $("#update_result").hide()
-                $("#id_test").hide()
-                $('label[for="id_test"]').hide();
-                $('label[for="id_exam"]').hide();
-                if (student.length  == 0 || subject.length == 0 || student < 1 || subject < 1){
-                    return false;
+        function fetch_student_result(){
+            var student = $("#id_student").val();
+            var subject = $("#id_subject").val();
+            $("#id_test").val(null);
+            $("#id_exam").val(null);
+            $("#id_sessionFirst").val(null);
+            $("#id_sessionSecond").val(null);
+
+            if (student.length == 0 || subject.length == 0 || student < 1 || subject < 1) {
+                return false;
+            }
+            $.ajax({
+                url: "{% url 'fetch_student_result' %}",
+                type: 'POST',
+                data: {
+                    subject: subject,
+                    student: student
                 }
-                $.ajax({
-                    url: "{% url 'fetch_student_result' %}",
-                    type: 'POST',
-                    data: {
-                        subject: subject,
-                        student:student
-                    }
-                }).done(function (response) {
-                    if (response == 'False') {
-                        alert("No data to display")
-                    } else {
-                        var json_data = JSON.parse(response)
-                        
-                            $("#id_test").val(json_data['test'])
-                            $("#id_exam").val(json_data['exam'])
-                            $("#id_exam").show()
-                            $("#id_test").show()
-                            $("#update_result").show()
-                            $('label[for="id_test"]').show();
-                            $('label[for="id_exam"]').show();
+            }).done(function (response) {
+                if (response == 'False') {
+                    alert("No data to display");
+                } else {
+                    var json_data = JSON.parse(response);
+                    $("#id_test").val(json_data['test']);
+                    $("#id_exam").val(json_data['exam']);
+                    $("#id_sessionFirst").val(json_data['sessionFirst']);
+                    $("#id_sessionSecond").val(json_data['sessionSecond']);
 
-                    }
-                }).fail(function (response) {
-                    alert("Error in fetching students")
-                })
-               }
-
-    })
+                    $('label[for="id_test"]').show();
+                    $('label[for="id_exam"]').show();
+                    $('label[for="id_sessionFirst"]').show();
+                    $('label[for="id_sessionSecond"]').show();
+                    $("#id_exam").show();
+                    $("#id_test").show();
+                    $("#update_result").show()
+                    $("#id_sessionFirst").show();
+                    $("#id_sessionSecond").show();
+                }
+            }).fail(function (response) {
+                alert("Error in fetching students");
+            });
+        }
+    });
 </script>
+
 {% endblock custom_js %}
