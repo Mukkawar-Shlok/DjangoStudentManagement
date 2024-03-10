@@ -4,16 +4,21 @@
 
 
         {% for field in form %}
-    {% if field.name == 'profile_pic' %}
-        <input type="file" name="profile_pic" accept="image/*" class="form-control" style="display: none;">
-    {% else %}
-        <div class="form-group">
-            {{ field.errors }}
-            {{ field.label_tag }}
-            {{ field }}
-        </div>
-    {% endif %}
-{% endfor %}
+        {% if field.name == 'profile_pic' %}
+            <input type="file" name="profile_pic" accept="image/*" class="form-control" style="display: none;">
+        {% else %}
+            {% if field.name == 'address' %}
+                <textarea name="address" cols="40" rows="10" class="form-control" id="id_address" style="display: none;"></textarea>
+            {% else %}
+                <div class="form-group">
+                    {{ field.errors }}
+                    {{ field.label_tag }}
+                    {{ field }}
+                </div>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    
 
 
 
@@ -33,3 +38,12 @@
         </button>
     </div>
 </form>
+<script>
+    // JavaScript code to change the label text
+    document.addEventListener('DOMContentLoaded', function() {
+        var label = document.querySelector('label[for="id_course"]');
+        if (label) {
+            label.innerText = 'Branch:';
+        }
+    });
+</script>
