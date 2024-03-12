@@ -13,7 +13,7 @@ from django.views.generic import UpdateView
 from .forms import *
 from .models import *
 
-
+from django.db.models import F
 def admin_home(request):
     total_staff = Staff.objects.all().count()
     total_students = Student.objects.all().count()
@@ -214,6 +214,10 @@ def manage_staff(request):
 
 def manage_student(request):
     students = CustomUser.objects.filter(user_type=3)
+    students = students.annotate(student_id=F('student__id'))
+    students = students.exclude(student_id=None)
+    for student in students:
+        print(student.student_id)
     context = {
         'students': students,
         'page_title': 'Manage Students'
@@ -296,46 +300,58 @@ def edit_student(request, student_id):
         'student_id': student_id,
         'page_title': 'Edit Student'
     }
+    
     if request.method == 'POST':
-        if form.is_valid():
-            first_name = form.cleaned_data.get('first_name')
-            last_name = form.cleaned_data.get('last_name')
-            address = form.cleaned_data.get('address')
-            username = form.cleaned_data.get('username')
-            email = form.cleaned_data.get('email')
-            gender = form.cleaned_data.get('gender')
-            password = form.cleaned_data.get('password') or None
-            course = form.cleaned_data.get('course')
-            session = form.cleaned_data.get('session')
-            passport = request.FILES.get('profile_pic') or None
+        if form.is_valid():  # Validate the form
             try:
+                # Extract data from the validated form
+                first_name = form.cleaned_data.get('first_name')
+                last_name = form.cleaned_data.get('last_name')
+                address = form.cleaned_data.get('address')
+                username = form.cleaned_data.get('username')
+                email = form.cleaned_data.get('email')
+                gender = form.cleaned_data.get('gender')
+                password = form.cleaned_data.get('password') or None
+                course = form.cleaned_data.get('course')
+                session = form.cleaned_data.get('session')
+                passport = request.FILES.get('profile_pic') or None
+                roll = form.cleaned_data.get('roll')
+                
                 user = CustomUser.objects.get(id=student.admin.id)
-                if passport != None:
+                if passport:
                     fs = FileSystemStorage()
                     filename = fs.save(passport.name, passport)
                     passport_url = fs.url(filename)
                     user.profile_pic = passport_url
+                
                 user.username = username
                 user.email = email
-                if password != None:
+                if password:
                     user.set_password(password)
+                
                 user.first_name = first_name
                 user.last_name = last_name
-                student.session = session
                 user.gender = gender
                 user.address = address
+                
+                student.session = session
                 student.course = course
+                student.roll = roll
+                
                 user.save()
                 student.save()
+                
                 messages.success(request, "Successfully Updated")
                 return redirect(reverse('edit_student', args=[student_id]))
             except Exception as e:
                 messages.error(request, "Could Not Update " + str(e))
         else:
-            messages.error(request, "Please Fill Form Properly!")
-    else:
-        return render(request, "hod_template/edit_student_template.html", context)
+            # Form is not valid, display errors
+            context['form_errors'] = form.errors
+            print(context) 
+            messages.error(request, "Please fill the form properly")
 
+    return render(request, "hod_template/edit_student_template.html", context)
 
 def edit_course(request, course_id):
     instance = get_object_or_404(Course, id=course_id)
@@ -688,11 +704,17 @@ def delete_staff(request, staff_id):
     return redirect(reverse('manage_staff'))
 
 
+
 def delete_student(request, student_id):
-    student = get_object_or_404(CustomUser, student__id=student_id)
-    student.delete()
-    messages.success(request, "Student deleted successfully!")
+    try:
+        student = CustomUser.objects.get(id=student_id, user_type=3)
+        student.delete()
+        messages.success(request, "Student deleted successfully!")
+    except CustomUser.DoesNotExist:
+        messages.error(request, "No such student found.")
+    
     return redirect(reverse('manage_student'))
+
 
 
 def delete_course(request, course_id):
