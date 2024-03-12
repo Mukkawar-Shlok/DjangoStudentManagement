@@ -12,7 +12,7 @@ from django.views.generic import UpdateView
 
 from .forms import *
 from .models import *
-
+from django.db import DatabaseError
 from django.db.models import F
 def admin_home(request):
     total_staff = Staff.objects.all().count()
@@ -133,6 +133,7 @@ def add_student(request):
         password = student_form.cleaned_data.get('password')
         course = student_form.cleaned_data.get('course')
         session = student_form.cleaned_data.get('session')
+        roll = student_form.cleaned_data.get('roll')
         # passport = request.FILES['profile_pic']
         # fs = FileSystemStorage()
         # filename = fs.save(passport.name, passport)
@@ -144,6 +145,7 @@ def add_student(request):
             user.address = "address"
             user.student.session = session
             user.student.course = course
+            user.student.roll = roll
             user.save()
             messages.success(request, "Successfully Added")
             return redirect(reverse('add_student'))
@@ -712,6 +714,8 @@ def delete_student(request, student_id):
         messages.success(request, "Student deleted successfully!")
     except CustomUser.DoesNotExist:
         messages.error(request, "No such student found.")
+    except DatabaseError as e:
+        messages.error(request, f"Database error occurred: {e}")
     
     return redirect(reverse('manage_student'))
 
